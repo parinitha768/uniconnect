@@ -3,7 +3,7 @@ services:
     name: uniconnect-portal
     runtime: node
     plan: free
-    buildCommand: npm run install:all && npm run build && npm run postinstall && npm run db:push && npm run db:seed
+    buildCommand: npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -12,4 +12,3 @@ services:
         generateValue: true
       - key: DATABASE_URL
         value: "file:./dev.db"
-
