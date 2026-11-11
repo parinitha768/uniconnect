@@ -131,7 +131,7 @@ export const StudentFeesPage: React.FC = () => {
             {currentFee.pendingFee > 0 && (
               <button
                 onClick={() => openPaymentModal(currentFee)}
-                className="mt-4 w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs py-2 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                className="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs py-2 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-1.5"
               >
                 <CreditCard className="w-3.5 h-3.5" /> Pay Pending Fee Now
               </button>
@@ -250,7 +250,7 @@ export const StudentFeesPage: React.FC = () => {
 
                 <button
                   onClick={() => setShowPayModal(false)}
-                  className="w-full bg-sky-600 text-white font-semibold text-xs py-2.5 rounded-xl hover:bg-sky-700 transition-colors cursor-pointer"
+                  className="w-full bg-slate-900 text-white font-semibold text-xs py-2.5 rounded-xl hover:bg-slate-800 transition-colors"
                 >
                   Close Receipt
                 </button>

@@ -61,30 +61,30 @@ export const ParentDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Welcome Card */}
-      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/50 to-sky-50 p-6 sm:p-8 rounded-2xl text-slate-900 border border-emerald-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-slate-900 to-emerald-950 p-6 sm:p-8 rounded-2xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900">Parent Portal: {parent.name}</h1>
-            <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-200">
+            <h1 className="text-2xl font-bold">Parent Portal: {parent.name}</h1>
+            <span className="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/30">
               Verified Parent / Guardian
             </span>
           </div>
-          <p className="text-slate-600 text-sm mt-1">
+          <p className="text-slate-300 text-sm mt-1">
             Monitoring academic performance, fee status, and attendance for your linked ward(s).
           </p>
         </div>
 
         {/* Student Selector if multiple linked students */}
         {linkedStudents.length > 1 && (
-          <div className="flex items-center gap-2 bg-white/90 p-1.5 rounded-xl border border-slate-200 shadow-xs">
+          <div className="flex items-center gap-2 bg-white/10 p-1.5 rounded-xl border border-white/10">
             {linkedStudents.map((s: any, idx: number) => (
               <button
                 key={s.studentId}
                 onClick={() => setSelectedStudentIndex(idx)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   selectedStudentIndex === idx
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-emerald-500 text-white shadow-sm'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 {s.profile.name}

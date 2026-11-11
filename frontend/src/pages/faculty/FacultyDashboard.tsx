@@ -48,34 +48,34 @@ export const FacultyDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-sky-50 via-indigo-50/50 to-purple-50 p-6 sm:p-8 rounded-2xl text-slate-900 border border-sky-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 sm:p-8 rounded-2xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <img
             src={faculty.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${faculty.employeeId}`}
             alt={faculty.name}
-            className="w-16 h-16 rounded-2xl border-2 border-white shadow-md bg-white object-cover"
+            className="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-md bg-white/10 object-cover"
           />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900">{faculty.name}</h1>
-              <span className="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-indigo-200">
+              <h1 className="text-2xl font-bold">{faculty.name}</h1>
+              <span className="bg-indigo-500/20 text-indigo-300 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-indigo-500/30">
                 {faculty.designation}
               </span>
             </div>
-            <p className="text-slate-600 text-sm mt-0.5">
-              Emp ID: <span className="font-mono text-slate-900 font-semibold">{faculty.employeeId}</span> • {faculty.department}
+            <p className="text-slate-300 text-sm mt-0.5">
+              Emp ID: <span className="font-mono text-white font-semibold">{faculty.employeeId}</span> • {faculty.department}
             </p>
           </div>
         </div>
 
         <div className="flex gap-4">
-          <div className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-xl border border-slate-200/80 text-center shadow-xs">
-            <p className="text-xs text-slate-500 font-medium">Enrolled Students</p>
-            <p className="text-2xl font-black text-sky-700 mt-0.5">{stats.totalStudents}</p>
+          <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10 text-center">
+            <p className="text-xs text-slate-300">Enrolled Students</p>
+            <p className="text-2xl font-black text-sky-400 mt-0.5">{stats.totalStudents}</p>
           </div>
-          <div className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-xl border border-slate-200/80 text-center shadow-xs">
-            <p className="text-xs text-slate-500 font-medium">Assigned Courses</p>
-            <p className="text-2xl font-black text-slate-900 mt-0.5">{stats.assignedCoursesCount}</p>
+          <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10 text-center">
+            <p className="text-xs text-slate-300">Assigned Courses</p>
+            <p className="text-2xl font-black text-white mt-0.5">{stats.assignedCoursesCount}</p>
           </div>
         </div>
       </div>

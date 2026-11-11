@@ -141,12 +141,12 @@ export const Navbar: React.FC = () => {
 
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="p-3 bg-slate-50 border-b border-slate-100 text-slate-800 flex items-center justify-between">
+              <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-sky-600" />
-                  <span className="font-semibold text-sm text-slate-900">Notifications</span>
+                  <Bell className="w-4 h-4 text-sky-400" />
+                  <span className="font-semibold text-sm">Notifications</span>
                   {unreadCount > 0 && (
-                    <span className="bg-sky-50 text-sky-700 text-xs px-2 py-0.5 rounded-full font-medium border border-sky-200">
+                    <span className="bg-sky-500/20 text-sky-300 text-xs px-2 py-0.5 rounded-full font-medium">
                       {unreadCount} unread
                     </span>
                   )}
@@ -154,7 +154,7 @@ export const Navbar: React.FC = () => {
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-xs text-sky-600 hover:text-sky-800 font-medium underline"
+                    className="text-xs text-slate-300 hover:text-white underline"
                   >
                     Mark all read
                   </button>

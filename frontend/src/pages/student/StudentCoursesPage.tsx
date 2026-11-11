@@ -322,7 +322,7 @@ export const StudentCoursesPage: React.FC = () => {
                 <button
                   onClick={() => handleRegister(c.id)}
                   disabled={actionLoading || !isRegistrationOpen || c.isFull || totalCreditsRegistered + c.credits > maxCredits}
-                  className="bg-sky-600 hover:bg-sky-700 disabled:opacity-40 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-sm transition-colors flex items-center gap-1 cursor-pointer"
+                  className="bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-sm transition-colors flex items-center gap-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   {c.isFull ? 'Class Full' : 'Enroll Subject'}

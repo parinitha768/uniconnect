@@ -46,22 +46,22 @@ export const StudentExaminationsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header with CGPA Banner */}
-      <div className="bg-gradient-to-r from-sky-50 via-indigo-50/50 to-purple-50 p-6 sm:p-8 rounded-2xl text-slate-900 border border-sky-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 sm:p-8 rounded-2xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Examinations & Academic Performance</h1>
-          <p className="text-slate-600 text-sm mt-1">
+          <h1 className="text-2xl font-bold">Examinations & Academic Performance</h1>
+          <p className="text-slate-300 text-sm mt-1">
             Track examination timetables, internal assessment scores, and published semester grade cards.
           </p>
         </div>
 
         <div className="flex gap-4">
-          <div className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-xl border border-slate-200/80 text-center shadow-xs">
-            <p className="text-xs text-slate-500 font-medium">Cumulative GPA</p>
-            <p className="text-2xl font-extrabold text-emerald-600 mt-0.5">{cgpa.toFixed(2)}</p>
+          <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10 text-center">
+            <p className="text-xs text-slate-300 font-medium">Cumulative GPA</p>
+            <p className="text-2xl font-extrabold text-emerald-400 mt-0.5">{cgpa.toFixed(2)}</p>
           </div>
-          <div className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-xl border border-slate-200/80 text-center shadow-xs">
-            <p className="text-xs text-slate-500 font-medium">Earned Credits</p>
-            <p className="text-2xl font-extrabold text-sky-700 mt-0.5">{earnedCredits}</p>
+          <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/10 text-center">
+            <p className="text-xs text-slate-300 font-medium">Earned Credits</p>
+            <p className="text-2xl font-extrabold text-sky-400 mt-0.5">{earnedCredits}</p>
           </div>
         </div>
       </div>

@@ -21,17 +21,6 @@ import {
   MapPin,
   Layers,
 } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  ReferenceLine,
-  Cell,
-} from 'recharts';
 
 export const StudentDashboard: React.FC = () => {
   const [data, setData] = useState<any>(null);
@@ -123,15 +112,6 @@ export const StudentDashboard: React.FC = () => {
   if (!data) return <div>Failed to load dashboard.</div>;
 
   const { student, summary, registeredCourses, attendanceOverview, examinations, feeSummary, announcements } = data;
-
-  // Chart data for subject-wise attendance analysis
-  const chartData = attendanceOverview.byCourse.map((c: any) => ({
-    code: c.courseCode,
-    title: c.courseTitle,
-    percentage: c.percentage,
-    present: c.present,
-    total: c.total,
-  }));
 
   const shortageCourses = attendanceOverview.byCourse.filter((c: any) => c.percentage < 85);
   const isOverallShortage = summary.overallAttendance < 85;
@@ -248,42 +228,38 @@ export const StudentDashboard: React.FC = () => {
       )}
 
       {/* Top Welcome Banner */}
-      <div className="bg-gradient-to-r from-sky-50 via-indigo-50/50 to-purple-50 rounded-2xl p-6 sm:p-8 text-slate-900 border border-sky-100 shadow-sm relative overflow-hidden">
-        {/* Soft background pastel decorative elements */}
-        <div className="absolute top-0 -right-10 w-64 h-64 bg-sky-200/30 rounded-full blur-2xl pointer-events-none"></div>
-        <div className="absolute bottom-0 -left-10 w-64 h-64 bg-indigo-200/30 rounded-full blur-2xl pointer-events-none"></div>
-
+      <div className="bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src={student.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${student.rollNumber}`}
               alt={student.name}
-              className="w-16 h-16 rounded-2xl border-2 border-white shadow-md bg-white"
+              className="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-md bg-white/10"
             />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">Welcome, {student.name}</h1>
-                <span className="bg-sky-100 text-sky-800 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-sky-200">
+                <h1 className="text-2xl font-bold tracking-tight">Welcome, {student.name}</h1>
+                <span className="bg-sky-500/20 text-sky-300 text-xs px-2.5 py-0.5 rounded-full font-medium border border-sky-500/30">
                   Sem {student.currentSemester}
                 </span>
               </div>
-              <p className="text-slate-600 text-sm mt-0.5">
-                USN: <span className="font-mono text-slate-900 font-bold bg-white/90 px-2 py-0.5 rounded border border-slate-200">{student.rollNumber}</span> • {student.department}
+              <p className="text-slate-300 text-sm mt-0.5">
+                USN: <span className="font-mono text-white font-bold">{student.rollNumber}</span> • {student.department}
               </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-slate-200/80 shadow-xs">
-              <p className="text-xs text-slate-500 font-medium">Cumulative GPA</p>
-              <p className="text-xl font-bold text-slate-900 mt-0.5 flex items-center justify-center gap-1">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-white/10">
+              <p className="text-xs text-slate-300 font-medium">Cumulative GPA</p>
+              <p className="text-xl font-bold text-white mt-0.5 flex items-center justify-center gap-1">
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
                 {student.cgpa.toFixed(2)}
               </p>
             </div>
-            <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-slate-200/80 shadow-xs">
-              <p className="text-xs text-slate-500 font-medium">Earned Credits</p>
-              <p className="text-xl font-bold text-sky-700 mt-0.5">{student.earnedCredits}</p>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-white/10">
+              <p className="text-xs text-slate-300 font-medium">Earned Credits</p>
+              <p className="text-xl font-bold text-sky-400 mt-0.5">{student.earnedCredits}</p>
             </div>
           </div>
         </div>
@@ -407,116 +383,7 @@ export const StudentDashboard: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. SUBJECT-WISE ATTENDANCE ANALYSIS GRAPH (WITH 85% THRESHOLD REFERENCE)  */}
-      {/* ========================================================================= */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900">Subject-wise Attendance Analysis</h2>
-              <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-mono">
-                Semester 4
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Red dashed line marks the <strong className="text-rose-600">85% Mandatory Minimum Attendance Requirement</strong>.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <span className="flex items-center gap-1.5 text-slate-600 font-medium">
-              <span className="w-3 h-3 rounded bg-emerald-500 inline-block"></span>
-              &ge; 85% (Compliant)
-            </span>
-            <span className="flex items-center gap-1.5 text-slate-600 font-medium">
-              <span className="w-3 h-3 rounded bg-rose-500 inline-block"></span>
-              &lt; 85% (Shortage)
-            </span>
-            <Link to="/student/attendance" className="font-bold text-sky-600 hover:underline ml-2">
-              Full Attendance Log &rarr;
-            </Link>
-          </div>
-        </div>
-
-        <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 25, right: 20, left: -15, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis
-                dataKey="code"
-                stroke="#64748b"
-                fontSize={12}
-                interval={0}
-                tick={{ dy: 5 }}
-              />
-              <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} unit="%" />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const d = payload[0].payload;
-                    const isOk = d.percentage >= 85;
-                    return (
-                      <div className="bg-white text-slate-800 p-3.5 rounded-xl shadow-xl border border-slate-200 text-xs space-y-1.5">
-                        <div className="flex items-center justify-between gap-3 pb-1 border-b border-slate-100">
-                          <span className="font-bold text-sky-700 font-mono">{d.code}</span>
-                          <span className="text-[10px] text-sky-600 font-semibold bg-sky-50 px-1.5 py-0.2 rounded border border-sky-100">
-                            Click for details
-                          </span>
-                        </div>
-                        <p className="font-semibold text-slate-900">{d.title}</p>
-                        <p className="flex justify-between gap-4 pt-0.5">
-                          <span className="text-slate-500">Attendance:</span>
-                          <span className={`font-bold font-mono ${isOk ? 'text-emerald-600' : 'text-rose-600'}`}>
-                            {d.percentage}%
-                          </span>
-                        </p>
-                        <p className="text-[11px] text-slate-500">
-                          Sessions: {d.present} attended of {d.total} held
-                        </p>
-                        <p className={`text-[10px] font-bold uppercase tracking-wider pt-1 ${isOk ? 'text-emerald-700' : 'text-rose-700'}`}>
-                          {isOk ? '✓ Compliant (Eligible for Exams)' : '⚠️ Shortage Warning (< 85% Debarment Risk)'}
-                        </p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <ReferenceLine
-                y={85}
-                stroke="#f43f5e"
-                strokeDasharray="4 4"
-                strokeWidth={2}
-                label={{
-                  value: '85% Minimum Required Threshold',
-                  fill: '#e11d48',
-                  fontSize: 11,
-                  position: 'top',
-                }}
-              />
-              <Bar
-                dataKey="percentage"
-                radius={[8, 8, 0, 0]}
-                onClick={(entry: any) => {
-                  const course = registeredCourses.find((c: any) => c.code === entry.code);
-                  if (course) setSelectedSubject(course);
-                }}
-                className="cursor-pointer"
-              >
-                {chartData.map((entry: any, index: number) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.percentage >= 85 ? '#34d399' : '#f87171'}
-                    className="hover:opacity-80 transition-opacity cursor-pointer"
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 3. ALL REGISTERED SUBJECT DETAILS SECTION                                  */}
+      {/* 2. ALL REGISTERED SUBJECT DETAILS SECTION                                  */}
       {/* ========================================================================= */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
@@ -554,7 +421,7 @@ export const StudentDashboard: React.FC = () => {
                 <div>
                   {/* Top Badges */}
                   <div className="flex items-center justify-between gap-2 mb-2.5">
-                    <span className="font-mono text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 px-2.5 py-1 rounded-lg">
+                    <span className="font-mono text-xs font-bold bg-slate-900 text-white px-2.5 py-1 rounded-lg">
                       {c.code}
                     </span>
                     <div className="flex items-center gap-1.5">
