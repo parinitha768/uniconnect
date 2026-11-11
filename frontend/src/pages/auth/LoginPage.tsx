@@ -57,35 +57,27 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const demoStudents = [
-    { usn: '1NC24IS001', name: 'Aarav Sharma', att: '83.3%', note: '< 85% Warning Popup' },
-    { usn: '1NC24IS002', name: 'Priya Nair', att: '91.2%', note: 'Compliant (>=85%)' },
-    { usn: '1NC24IS003', name: 'Rohan Deshmukh', att: '70.6%', note: '< 85% Shortage' },
-    { usn: '1NC24IS004', name: 'Sneha Reddy', att: '86.4%', note: 'Compliant (>=85%)' },
-    { usn: '1NC24IS005', name: 'Kavya Krishnan', att: '81.6%', note: '< 85% Shortage' },
-  ];
-
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background soft ambient glows */}
-      <div className="absolute top-0 -left-20 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-0 -right-20 w-96 h-96 bg-indigo-200/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background subtle ambient glows */}
+      <div className="absolute top-0 -left-40 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/20 mb-3">
-          <GraduationCap className="w-8 h-8" />
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white shadow-xl shadow-sky-500/20 mb-4">
+          <GraduationCap className="w-9 h-9" />
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h2 className="text-3xl font-extrabold text-white tracking-tight">
           UniConnect
         </h2>
-        <p className="mt-1 text-sm text-sky-600 font-semibold">
-          Nagarjuna University • Academic Portal
+        <p className="mt-1 text-sm text-sky-400 font-medium">
+          Nagarjuna University • Intelligent Management Portal
         </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg z-10">
-        <div className="bg-white py-7 px-6 shadow-xl shadow-slate-200/60 rounded-2xl border border-slate-200 sm:px-8">
-          <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10">
+        <div className="bg-white/95 backdrop-blur-md py-8 px-6 shadow-2xl rounded-2xl border border-slate-200 sm:px-10">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
               <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -130,7 +122,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-sky-600/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -143,81 +135,71 @@ export const LoginPage: React.FC = () => {
             </button>
 
             {/* Student Login Credentials Notice */}
-            <div className="p-3 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1 shadow-xs">
-              <span className="font-medium">🎓 <strong>Student Login:</strong> Enter USN (e.g. <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">1NC24IS001</code>)</span>
-              <span className="font-medium">Password: <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">12345678</code></span>
+            <div className="p-2.5 rounded-xl bg-sky-50/90 border border-sky-200 text-[11px] text-sky-900 flex items-center justify-between shadow-xs">
+              <span>🎓 <strong>Student Login:</strong> USN <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">1NC24IS001</code></span>
+              <span>Password: <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">12345678</code></span>
             </div>
           </form>
 
-          {/* 5 Registered Students Quick 1-Click Login */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center justify-between">
-              <span>5 Registered Students (1-Click Login)</span>
-              <span className="text-[10px] text-sky-600 font-mono font-semibold">Pass: 12345678</span>
+          {/* Quick Demo Logins Section */}
+          <div className="mt-8 pt-6 border-t border-slate-100">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 text-center">
+              Quick 1-Click Demo Login
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {demoStudents.map((st) => (
-                <button
-                  key={st.usn}
-                  type="button"
-                  onClick={() => handleDemoLogin(st.usn, '12345678')}
-                  className="p-2.5 rounded-xl border border-sky-100 bg-sky-50/60 hover:bg-sky-100 text-slate-800 text-xs font-medium flex items-center justify-between transition-colors text-left cursor-pointer"
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <GraduationCap className="w-4 h-4 text-sky-600 shrink-0" />
-                    <div className="truncate">
-                      <p className="font-semibold text-slate-900 truncate">{st.name}</p>
-                      <p className="text-[10px] text-slate-500 font-mono">{st.usn}</p>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${st.note.includes('Warning') || st.note.includes('Shortage') ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                      {st.att}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Other Roles Quick Demo Logins Section */}
-          <div className="mt-4 pt-4 border-t border-slate-100">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-              Faculty / Admin / Parent
-            </p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() => handleDemoLogin('admin@uniconnect.edu', 'Admin@123')}
-                className="p-2 rounded-xl border border-red-100 bg-red-50/50 hover:bg-red-100 text-red-800 text-xs font-medium flex flex-col items-center text-center transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl border border-red-100 bg-red-50/60 hover:bg-red-100 text-red-800 text-xs font-medium flex items-center gap-2 transition-colors text-left cursor-pointer"
               >
-                <ShieldCheck className="w-4 h-4 text-red-600 mb-0.5" />
-                <span className="font-semibold text-[11px]">Admin</span>
+                <ShieldCheck className="w-4 h-4 text-red-600 shrink-0" />
+                <div>
+                  <p className="font-semibold leading-tight">Admin</p>
+                  <p className="text-[10px] text-red-600/80">Dr. Ramanathan</p>
+                </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleDemoLogin('faculty.sharma@uniconnect.edu', 'Faculty@123')}
-                className="p-2 rounded-xl border border-indigo-100 bg-indigo-50/50 hover:bg-indigo-100 text-indigo-800 text-xs font-medium flex flex-col items-center text-center transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl border border-indigo-100 bg-indigo-50/60 hover:bg-indigo-100 text-indigo-800 text-xs font-medium flex items-center gap-2 transition-colors text-left cursor-pointer"
               >
-                <UserCheck className="w-4 h-4 text-indigo-600 mb-0.5" />
-                <span className="font-semibold text-[11px]">Faculty</span>
+                <UserCheck className="w-4 h-4 text-indigo-600 shrink-0" />
+                <div>
+                  <p className="font-semibold leading-tight">Faculty</p>
+                  <p className="text-[10px] text-indigo-600/80">Prof. Sharma</p>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDemoLogin('1NC24IS001', '12345678')}
+                className="p-2.5 rounded-xl border border-sky-100 bg-sky-50/60 hover:bg-sky-100 text-sky-800 text-xs font-medium flex items-center gap-2 transition-colors text-left cursor-pointer"
+              >
+                <GraduationCap className="w-4 h-4 text-sky-600 shrink-0" />
+                <div>
+                  <p className="font-semibold leading-tight">Student (Aarav)</p>
+                  <p className="text-[10px] text-sky-600/80 font-mono">1NC24IS001 • 12345678</p>
+                </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleDemoLogin('parent.rajesh@uniconnect.edu', 'Parent@123')}
-                className="p-2 rounded-xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100 text-emerald-800 text-xs font-medium flex flex-col items-center text-center transition-colors cursor-pointer"
+                className="p-2.5 rounded-xl border border-emerald-100 bg-emerald-50/60 hover:bg-emerald-100 text-emerald-800 text-xs font-medium flex items-center gap-2 transition-colors text-left cursor-pointer"
               >
-                <Users className="w-4 h-4 text-emerald-600 mb-0.5" />
-                <span className="font-semibold text-[11px]">Parent</span>
+                <Users className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div>
+                  <p className="font-semibold leading-tight">Parent</p>
+                  <p className="text-[10px] text-emerald-600/80">Rajesh Sharma</p>
+                </div>
               </button>
             </div>
           </div>
         </div>
 
         <p className="mt-4 text-center text-xs text-slate-400">
-          UniConnect Academic ERP • Nagarjuna University
+          UniConnect ERP Architecture • Agile Scrum Prototype 2026
         </p>
       </div>
     </div>

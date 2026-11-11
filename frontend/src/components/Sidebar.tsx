@@ -63,10 +63,10 @@ export const Sidebar: React.FC = () => {
     role === 'STUDENT'
       ? studentLinks
       : role === 'FACULTY'
-      ? facultyLinks
-      : role === 'PARENT'
-      ? parentLinks
-      : adminLinks;
+        ? facultyLinks
+        : role === 'PARENT'
+          ? parentLinks
+          : adminLinks;
 
   return (
     <aside className="w-64 bg-white text-slate-600 flex flex-col shrink-0 min-h-screen border-r border-slate-200/80 shadow-xs">
