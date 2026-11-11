@@ -69,30 +69,30 @@ export const Sidebar: React.FC = () => {
       : adminLinks;
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-screen border-r border-slate-800">
+    <aside className="w-64 bg-white text-slate-600 flex flex-col shrink-0 min-h-screen border-r border-slate-200/80 shadow-xs">
       {/* Brand Logo Header */}
-      <div className="h-16 flex items-center gap-3 px-6 bg-slate-950 border-b border-slate-800">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-sky-500/20">
+      <div className="h-16 flex items-center gap-3 px-6 bg-white border-b border-slate-100">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-sky-500/15">
           U
         </div>
         <div>
-          <h1 className="font-bold text-white text-base tracking-wide flex items-center gap-1.5">
+          <h1 className="font-bold text-slate-800 text-base tracking-wide flex items-center gap-1.5">
             UniConnect
-            <span className="text-[10px] bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded font-mono font-semibold">2.0</span>
+            <span className="text-[10px] bg-sky-50 text-sky-600 px-1.5 py-0.5 rounded font-mono font-semibold border border-sky-100">2.0</span>
           </h1>
           <p className="text-[11px] text-slate-400 font-medium">Nagarjuna University</p>
         </div>
       </div>
 
       {/* Role Navigation section */}
-      <div className="px-4 py-3 border-b border-slate-800/60 bg-slate-900/50">
+      <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/70">
         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
           {role} PORTAL
         </p>
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {links.map((link) => {
           const Icon = link.icon;
           return (
@@ -102,12 +102,12 @@ export const Sidebar: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20 font-semibold'
-                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                    ? 'bg-sky-50 text-sky-700 shadow-xs font-semibold border border-sky-200/60'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`
               }
             >
-              <Icon className="w-4 h-4 shrink-0" />
+              <Icon className="w-4 h-4 shrink-0 text-current opacity-80" />
               <span>{link.label}</span>
             </NavLink>
           );
@@ -115,8 +115,8 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* University Footer info */}
-      <div className="p-4 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex items-center gap-3">
-        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+      <div className="p-4 bg-slate-50/80 border-t border-slate-100 text-xs text-slate-500 flex items-center gap-3">
+        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
         <p className="truncate">Spring 2026 Academic Term</p>
       </div>
     </aside>

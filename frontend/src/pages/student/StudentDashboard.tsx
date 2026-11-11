@@ -17,6 +17,9 @@ import {
   ShieldAlert,
   UserCheck,
   Award,
+  Mail,
+  MapPin,
+  Layers,
 } from 'lucide-react';
 import {
   BarChart,
@@ -34,6 +37,54 @@ export const StudentDashboard: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showShortageModal, setShowShortageModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState<any>(null);
+
+  const getSyllabusModules = (code: string) => {
+    switch (code) {
+      case 'CS401':
+        return [
+          { unit: 'Unit 1', title: 'Relational Model & Advanced SQL', desc: 'Relational algebra, ER diagrams, normal forms (1NF, 2NF, 3NF, BCNF).' },
+          { unit: 'Unit 2', title: 'Transaction Processing & Concurrency', desc: 'ACID properties, serializability, two-phase locking, timestamp ordering.' },
+          { unit: 'Unit 3', title: 'Indexing & Query Optimization', desc: 'B-Trees, B+ Trees, hashing, cost-based optimizer mechanics.' },
+          { unit: 'Unit 4', title: 'NoSQL & Distributed DBs', desc: 'CAP theorem, document stores, key-value engines, data replication.' },
+        ];
+      case 'CS402':
+        return [
+          { unit: 'Unit 1', title: 'Asymptotic Analysis & Recurrences', desc: 'Big-O, Omega, Theta notation, Master Theorem, recursion trees.' },
+          { unit: 'Unit 2', title: 'Divide and Conquer & Sorting', desc: 'Merge sort, quicksort, lower bounds for sorting, matrix multiplication.' },
+          { unit: 'Unit 3', title: 'Dynamic Programming & Greedy', desc: '0/1 Knapsack, longest common subsequence, optimal BST, Huffman coding.' },
+          { unit: 'Unit 4', title: 'Graph Algorithms & NP-Completeness', desc: 'Dijkstra, Bellman-Ford, Floyd-Warshall, P vs NP, Cook-Levin theorem.' },
+        ];
+      case 'CS403':
+        return [
+          { unit: 'Unit 1', title: 'Process Management & Scheduling', desc: 'Process control blocks, context switching, CPU scheduling algorithms.' },
+          { unit: 'Unit 2', title: 'Synchronization & Deadlocks', desc: 'Mutex, semaphores, monitors, Banker’s algorithm, deadlock detection.' },
+          { unit: 'Unit 3', title: 'Memory Management & Paging', desc: 'Virtual memory, page replacement algorithms, segmentation, thrashing.' },
+          { unit: 'Unit 4', title: 'File Systems & Storage I/O', desc: 'File allocation methods, directory structures, disk scheduling.' },
+        ];
+      case 'CS404':
+        return [
+          { unit: 'Unit 1', title: 'Modern Frontend & Component Architecture', desc: 'Component lifecycle, hooks, state management, modern CSS frameworks.' },
+          { unit: 'Unit 2', title: 'Backend REST & GraphQL APIs', desc: 'Node.js, Express, middleware pipelines, authentication tokens.' },
+          { unit: 'Unit 3', title: 'Cloud Infrastructure & Containers', desc: 'Docker containerization, microservices, cloud storage, CI/CD pipelines.' },
+          { unit: 'Unit 4', title: 'Security & Web Performance', desc: 'CORS, CSRF/XSS prevention, caching strategies, CDN delivery.' },
+        ];
+      case 'ID401':
+        return [
+          { unit: 'Unit 1', title: 'IoT Architecture & Sensor Types', desc: 'Sensors, actuators, analog/digital conversion, embedded processors.' },
+          { unit: 'Unit 2', title: 'Connectivity Protocols', desc: 'MQTT, CoAP, Zigbee, BLE, LoRaWAN communication stacks.' },
+          { unit: 'Unit 3', title: 'Edge Analytics & Cloud Gateways', desc: 'Data aggregation at edge devices, streaming telemetry to cloud.' },
+          { unit: 'Unit 4', title: 'Smart Applications & Security', desc: 'Smart city grids, healthcare telemetry, device authentication.' },
+        ];
+      default:
+        return [
+          { unit: 'Unit 1', title: 'Foundations & Mathematical Modeling', desc: 'Fundamental theorems, system boundaries, core principles.' },
+          { unit: 'Unit 2', title: 'Design & Analytical Methodologies', desc: 'System analysis, transformations, simulation techniques.' },
+          { unit: 'Unit 3', title: 'Practical Implementations & Case Studies', desc: 'Industry standards, laboratory experimentation, performance metrics.' },
+          { unit: 'Unit 4', title: 'Emerging Trends & Advanced Topics', desc: 'State of the art paradigms, modern design optimizations.' },
+        ];
+    }
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -146,7 +197,12 @@ export const StudentDashboard: React.FC = () => {
                   {shortageCourses.map((c: any) => (
                     <div
                       key={c.courseCode}
-                      className="p-2.5 rounded-xl border border-rose-200 bg-rose-50/50 flex items-center justify-between text-xs"
+                      onClick={() => {
+                        const course = registeredCourses.find((rc: any) => rc.code === c.courseCode);
+                        if (course) setSelectedSubject(course);
+                      }}
+                      className="p-2.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100/70 cursor-pointer flex items-center justify-between text-xs transition-colors"
+                      title="Click to view full course details"
                     >
                       <div>
                         <div className="flex items-center gap-1.5">
@@ -156,7 +212,7 @@ export const StudentDashboard: React.FC = () => {
                           <span className="text-slate-700 truncate max-w-[200px] font-medium">{c.courseTitle}</span>
                         </div>
                         <p className="text-[11px] text-slate-500 mt-1">
-                          Classes: {c.present} attended of {c.total} held
+                          Classes: {c.present} attended of {c.total} held • <span className="text-sky-600 underline">View Details</span>
                         </p>
                       </div>
                       <div className="text-right shrink-0">
@@ -192,38 +248,42 @@ export const StudentDashboard: React.FC = () => {
       )}
 
       {/* Top Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-sky-50 via-indigo-50/50 to-purple-50 rounded-2xl p-6 sm:p-8 text-slate-900 border border-sky-100 shadow-sm relative overflow-hidden">
+        {/* Soft background pastel decorative elements */}
+        <div className="absolute top-0 -right-10 w-64 h-64 bg-sky-200/30 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="absolute bottom-0 -left-10 w-64 h-64 bg-indigo-200/30 rounded-full blur-2xl pointer-events-none"></div>
+
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src={student.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${student.rollNumber}`}
               alt={student.name}
-              className="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-md bg-white/10"
+              className="w-16 h-16 rounded-2xl border-2 border-white shadow-md bg-white"
             />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight">Welcome, {student.name}</h1>
-                <span className="bg-sky-500/20 text-sky-300 text-xs px-2.5 py-0.5 rounded-full font-medium border border-sky-500/30">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900">Welcome, {student.name}</h1>
+                <span className="bg-sky-100 text-sky-800 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-sky-200">
                   Sem {student.currentSemester}
                 </span>
               </div>
-              <p className="text-slate-300 text-sm mt-0.5">
-                USN: <span className="font-mono text-white font-bold">{student.rollNumber}</span> • {student.department}
+              <p className="text-slate-600 text-sm mt-0.5">
+                USN: <span className="font-mono text-slate-900 font-bold bg-white/90 px-2 py-0.5 rounded border border-slate-200">{student.rollNumber}</span> • {student.department}
               </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-white/10">
-              <p className="text-xs text-slate-300 font-medium">Cumulative GPA</p>
-              <p className="text-xl font-bold text-white mt-0.5 flex items-center justify-center gap-1">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-slate-200/80 shadow-xs">
+              <p className="text-xs text-slate-500 font-medium">Cumulative GPA</p>
+              <p className="text-xl font-bold text-slate-900 mt-0.5 flex items-center justify-center gap-1">
+                <TrendingUp className="w-4 h-4 text-emerald-600" />
                 {student.cgpa.toFixed(2)}
               </p>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-white/10">
-              <p className="text-xs text-slate-300 font-medium">Earned Credits</p>
-              <p className="text-xl font-bold text-sky-400 mt-0.5">{student.earnedCredits}</p>
+            <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 px-4 text-center border border-slate-200/80 shadow-xs">
+              <p className="text-xs text-slate-500 font-medium">Earned Credits</p>
+              <p className="text-xl font-bold text-sky-700 mt-0.5">{student.earnedCredits}</p>
             </div>
           </div>
         </div>
@@ -395,18 +455,24 @@ export const StudentDashboard: React.FC = () => {
                     const d = payload[0].payload;
                     const isOk = d.percentage >= 85;
                     return (
-                      <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl border border-slate-800 text-xs space-y-1">
-                        <p className="font-bold text-sky-400 font-mono">{d.code}: {d.title}</p>
-                        <p className="flex justify-between gap-4">
-                          <span>Attendance:</span>
-                          <span className={`font-bold font-mono ${isOk ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      <div className="bg-white text-slate-800 p-3.5 rounded-xl shadow-xl border border-slate-200 text-xs space-y-1.5">
+                        <div className="flex items-center justify-between gap-3 pb-1 border-b border-slate-100">
+                          <span className="font-bold text-sky-700 font-mono">{d.code}</span>
+                          <span className="text-[10px] text-sky-600 font-semibold bg-sky-50 px-1.5 py-0.2 rounded border border-sky-100">
+                            Click for details
+                          </span>
+                        </div>
+                        <p className="font-semibold text-slate-900">{d.title}</p>
+                        <p className="flex justify-between gap-4 pt-0.5">
+                          <span className="text-slate-500">Attendance:</span>
+                          <span className={`font-bold font-mono ${isOk ? 'text-emerald-600' : 'text-rose-600'}`}>
                             {d.percentage}%
                           </span>
                         </p>
-                        <p className="text-[11px] text-slate-300">
+                        <p className="text-[11px] text-slate-500">
                           Sessions: {d.present} attended of {d.total} held
                         </p>
-                        <p className={`text-[10px] font-bold uppercase tracking-wider pt-1 ${isOk ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <p className={`text-[10px] font-bold uppercase tracking-wider pt-1 ${isOk ? 'text-emerald-700' : 'text-rose-700'}`}>
                           {isOk ? '✓ Compliant (Eligible for Exams)' : '⚠️ Shortage Warning (< 85% Debarment Risk)'}
                         </p>
                       </div>
@@ -417,21 +483,30 @@ export const StudentDashboard: React.FC = () => {
               />
               <ReferenceLine
                 y={85}
-                stroke="#ef4444"
+                stroke="#f43f5e"
                 strokeDasharray="4 4"
                 strokeWidth={2}
                 label={{
                   value: '85% Minimum Required Threshold',
-                  fill: '#dc2626',
+                  fill: '#e11d48',
                   fontSize: 11,
                   position: 'top',
                 }}
               />
-              <Bar dataKey="percentage" radius={[8, 8, 0, 0]}>
+              <Bar
+                dataKey="percentage"
+                radius={[8, 8, 0, 0]}
+                onClick={(entry: any) => {
+                  const course = registeredCourses.find((c: any) => c.code === entry.code);
+                  if (course) setSelectedSubject(course);
+                }}
+                className="cursor-pointer"
+              >
                 {chartData.map((entry: any, index: number) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={entry.percentage >= 85 ? '#10b981' : '#f43f5e'}
+                    fill={entry.percentage >= 85 ? '#34d399' : '#f87171'}
+                    className="hover:opacity-80 transition-opacity cursor-pointer"
                   />
                 ))}
               </Bar>
@@ -451,7 +526,7 @@ export const StudentDashboard: React.FC = () => {
               All Enrolled Subjects & Course Information
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Review syllabus, credits, assigned professors, live subject attendance, and internal assessment marks.
+              Click on any subject name or card to open detailed curriculum, faculty office details, and live attendance statistics.
             </p>
           </div>
           <span className="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full self-start sm:self-auto">
@@ -468,29 +543,31 @@ export const StudentDashboard: React.FC = () => {
             return (
               <div
                 key={c.code}
-                className={`p-5 rounded-2xl border transition-all hover:shadow-md flex flex-col justify-between ${
+                onClick={() => setSelectedSubject(c)}
+                className={`p-5 rounded-2xl border transition-all hover:shadow-md flex flex-col justify-between cursor-pointer group ${
                   isShortage
-                    ? 'border-rose-200 bg-rose-50/20 hover:border-rose-300'
-                    : 'border-slate-200 bg-slate-50/50 hover:border-slate-300 hover:bg-white'
+                    ? 'border-rose-200 bg-rose-50/20 hover:border-rose-300 hover:bg-rose-50/40'
+                    : 'border-slate-200 bg-slate-50/40 hover:border-sky-300 hover:bg-sky-50/10'
                 }`}
+                title="Click to view full course syllabus and faculty details"
               >
                 <div>
                   {/* Top Badges */}
                   <div className="flex items-center justify-between gap-2 mb-2.5">
-                    <span className="font-mono text-xs font-bold bg-slate-900 text-white px-2.5 py-1 rounded-lg">
+                    <span className="font-mono text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 px-2.5 py-1 rounded-lg">
                       {c.code}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                         {c.credits} Credits
                       </span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           c.type === 'CORE'
-                            ? 'bg-blue-100 text-blue-800'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
                             : c.type === 'ELECTIVE'
-                            ? 'bg-indigo-100 text-indigo-800'
-                            : 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         }`}
                       >
                         {c.type}
@@ -499,13 +576,16 @@ export const StudentDashboard: React.FC = () => {
                   </div>
 
                   {/* Title & Description */}
-                  <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-1">{c.title}</h3>
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors flex items-center justify-between">
+                    <span className="truncate">{c.title}</span>
+                    <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-sky-600 shrink-0 ml-1" />
+                  </h3>
                   <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                     {c.description || 'Comprehensive curriculum covering theoretical foundations and practical laboratory work.'}
                   </p>
 
                   {/* Faculty Info */}
-                  <div className="mt-3.5 pt-3 border-t border-slate-200/60 text-xs space-y-1">
+                  <div className="mt-3.5 pt-3 border-t border-slate-100 text-xs space-y-1">
                     <p className="text-slate-700 font-semibold flex items-center justify-between">
                       <span className="text-slate-400 font-normal">Instructor:</span>
                       <span className="truncate max-w-[180px] font-medium">{c.facultyName}</span>
@@ -522,7 +602,7 @@ export const StudentDashboard: React.FC = () => {
                 </div>
 
                 {/* Bottom Performance Metrics: Attendance & Internal Marks */}
-                <div className="mt-4 pt-3 border-t border-slate-200/60 space-y-2.5">
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-2.5">
                   {/* Attendance Bar */}
                   <div>
                     <div className="flex items-center justify-between text-xs mb-1">
@@ -535,19 +615,20 @@ export const StudentDashboard: React.FC = () => {
                         {att.percentage}% {isShortage ? '(Shortage < 85%)' : '(Compliant)'}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${isShortage ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                        className={`h-full rounded-full transition-all ${isShortage ? 'bg-rose-400' : 'bg-emerald-400'}`}
                         style={{ width: `${Math.min(100, att.percentage)}%` }}
                       ></div>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-0.5 text-right font-mono">
-                      {att.present} of {att.total} classes attended
-                    </p>
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                      <span className="text-sky-600 font-sans font-medium group-hover:underline">Click for details →</span>
+                      <span>{att.present} of {att.total} attended</span>
+                    </div>
                   </div>
 
                   {/* Internal Assessment Marks */}
-                  <div className="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-slate-200/70">
+                  <div className="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-slate-100">
                     <span className="text-slate-500 font-medium">Internal Assessment:</span>
                     <span className="font-bold text-slate-900 font-mono">
                       {c.internalMarks !== null ? `${c.internalMarks} / 30 Marks` : 'Pending Entry'}
@@ -637,6 +718,200 @@ export const StudentDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* 4. INTERACTIVE SUBJECT DETAILS MODAL (CLICK ON SUBJECT NAME/CARD/GRAPH)    */}
+      {/* ========================================================================= */}
+      {selectedSubject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="font-mono text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 px-2.5 py-0.5 rounded-lg">
+                    {selectedSubject.code}
+                  </span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                    {selectedSubject.credits} Credits
+                  </span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    {selectedSubject.type}
+                  </span>
+                </div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  {selectedSubject.title}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Semester {selectedSubject.semesterNumber || 4} • Information Science & Engineering
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSubject(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Attendance Status Callout */}
+            {(() => {
+              const att = selectedSubject.attendance || { total: 0, present: 0, percentage: 100, isShortage: false };
+              const isBelow85 = att.percentage < 85;
+              return (
+                <div className={`mt-4 p-4 rounded-2xl border ${
+                  isBelow85
+                    ? 'bg-rose-50/70 border-rose-200 text-rose-950'
+                    : 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
+                }`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`p-2 rounded-xl ${isBelow85 ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                        {isBelow85 ? <AlertTriangle className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider">
+                          Live Subject Attendance
+                        </p>
+                        <p className="text-sm font-semibold">
+                          {isBelow85 ? 'Shortage Alert (< 85% Minimum Threshold)' : 'Satisfactory & Exam Eligible (≥ 85%)'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-2xl font-black font-mono ${isBelow85 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        {att.percentage}%
+                      </p>
+                      <p className="text-[11px] text-slate-500">Threshold: 85.0%</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/50 text-center text-xs">
+                    <div className="bg-white/80 p-2 rounded-xl">
+                      <p className="text-slate-500 text-[11px]">Sessions Held</p>
+                      <p className="font-bold font-mono text-slate-900 mt-0.5">{att.total}</p>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl">
+                      <p className="text-emerald-700 text-[11px]">Attended</p>
+                      <p className="font-bold font-mono text-emerald-700 mt-0.5">{att.present}</p>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl">
+                      <p className="text-rose-700 text-[11px]">Missed</p>
+                      <p className="font-bold font-mono text-rose-700 mt-0.5">{att.absent ?? (att.total - att.present)}</p>
+                    </div>
+                  </div>
+
+                  {isBelow85 && (
+                    <p className="text-xs text-rose-800 mt-2.5 leading-relaxed bg-white/60 p-2 rounded-xl border border-rose-200">
+                      ⚠️ <strong>Examination Debarment Warning:</strong> Students with attendance below 85% in this course are not permitted to appear for final examinations unless condonation is formally submitted and approved by the department.
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Faculty Instructor Details */}
+            <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-sky-600" />
+                Assigned Faculty Instructor
+              </h3>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <p className="font-bold text-slate-900 text-sm">{selectedSubject.facultyName}</p>
+                  <p className="text-xs text-slate-600">{selectedSubject.facultyDesignation}</p>
+                </div>
+                <div className="text-xs space-y-1 sm:text-right">
+                  {selectedSubject.facultyEmail && (
+                    <p className="text-slate-600 flex items-center sm:justify-end gap-1.5">
+                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                      <a href={`mailto:${selectedSubject.facultyEmail}`} className="text-sky-600 hover:underline">
+                        {selectedSubject.facultyEmail}
+                      </a>
+                    </p>
+                  )}
+                  <p className="text-slate-500 flex items-center sm:justify-end gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Office: {selectedSubject.officeRoom || 'Department Faculty Room 302'}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Continuous Internal Assessment (CIE) */}
+            <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Continuous Internal Assessment (CIE)
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5">Scale: 30 Marks internal component</p>
+              </div>
+              <div className="text-right">
+                <span className="text-lg font-bold font-mono text-slate-900">
+                  {selectedSubject.internalMarks !== null ? `${selectedSubject.internalMarks} / 30` : 'Pending'}
+                </span>
+                <span className="text-[11px] text-slate-500 block">Marks Scored</span>
+              </div>
+            </div>
+
+            {/* Course Description & Syllabus Modules */}
+            <div className="mt-4 space-y-3">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-indigo-600" />
+                  Course Overview & Description
+                </h3>
+                <p className="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-xl border border-slate-200">
+                  {selectedSubject.description || 'Comprehensive curriculum covering theoretical foundations and practical laboratory work.'}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-sky-600" />
+                  Syllabus Units & Modules
+                </h3>
+                <div className="space-y-2">
+                  {getSyllabusModules(selectedSubject.code).map((m: any, idx: number) => (
+                    <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-sky-700 font-mono bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100">
+                          {m.unit}
+                        </span>
+                        <span className="font-semibold text-slate-900">{m.title}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 pl-1">{m.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end gap-2.5">
+              {selectedSubject.attendance?.percentage < 85 && (
+                <Link
+                  to="/student/attendance"
+                  onClick={() => setSelectedSubject(null)}
+                  className="w-full sm:w-auto py-2.5 px-5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/20 cursor-pointer"
+                >
+                  <span>Apply Condonation for {selectedSubject.code}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={() => setSelectedSubject(null)}
+                className="w-full sm:w-auto py-2.5 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors text-center cursor-pointer"
+              >
+                Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -53,23 +53,23 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Admin Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-indigo-950 p-6 sm:p-8 rounded-2xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-rose-50/70 via-sky-50 to-indigo-50/60 p-6 sm:p-8 rounded-2xl text-slate-900 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">University Administration Console</h1>
-            <span className="bg-red-500/20 text-red-300 text-xs px-2.5 py-0.5 rounded-full font-bold border border-red-500/30">
+            <h1 className="text-2xl font-bold text-slate-900">University Administration Console</h1>
+            <span className="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold border border-rose-200">
               Super Admin
             </span>
           </div>
-          <p className="text-slate-300 text-sm mt-1">
+          <p className="text-slate-600 text-sm mt-1">
             Nagarjuna University • Central Academic, Policy, Finance & Grievance Control
           </p>
         </div>
 
         <div className="flex gap-4">
-          <div className="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-center">
-            <p className="text-xs text-slate-300">Active Term</p>
-            <p className="text-sm font-bold text-white mt-0.5">{currentSemester?.name || 'Spring 2026'}</p>
+          <div className="bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-slate-200/80 text-center shadow-xs">
+            <p className="text-xs text-slate-500">Active Term</p>
+            <p className="text-sm font-bold text-slate-900 mt-0.5">{currentSemester?.name || 'Spring 2026'}</p>
           </div>
         </div>
       </div>

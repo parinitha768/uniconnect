@@ -370,38 +370,13 @@ async function main() {
     courseRecords.push(course);
   }
 
-  console.log('Seeding Exactly 30 Students with USN 1NC24IS001 to 1NC24IS030...');
+  console.log('Seeding Exactly 5 Students with USN 1NC24IS001 to 1NC24IS005...');
   const studentNamesList = [
     { first: 'Aarav', last: 'Sharma', gender: 'Male', blood: 'O+' },
     { first: 'Priya', last: 'Nair', gender: 'Female', blood: 'A+' },
     { first: 'Rohan', last: 'Deshmukh', gender: 'Male', blood: 'B+' },
     { first: 'Sneha', last: 'Reddy', gender: 'Female', blood: 'AB+' },
     { first: 'Kavya', last: 'Krishnan', gender: 'Female', blood: 'O-' },
-    { first: 'Vikram', last: 'Singhania', gender: 'Male', blood: 'A-' },
-    { first: 'Ananya', last: 'Verma', gender: 'Female', blood: 'B+' },
-    { first: 'Aditya', last: 'Chopra', gender: 'Male', blood: 'O+' },
-    { first: 'Ishita', last: 'Banerjee', gender: 'Female', blood: 'A+' },
-    { first: 'Varun', last: 'Mehta', gender: 'Male', blood: 'B-' },
-    { first: 'Tanvi', last: 'Joshi', gender: 'Female', blood: 'O+' },
-    { first: 'Rahul', last: 'Bhardwaj', gender: 'Male', blood: 'A+' },
-    { first: 'Pooja', last: 'Hegde', gender: 'Female', blood: 'AB-' },
-    { first: 'Siddharth', last: 'Menon', gender: 'Male', blood: 'B+' },
-    { first: 'Neha', last: 'Gupta', gender: 'Female', blood: 'O+' },
-    { first: 'Gaurav', last: 'Mishra', gender: 'Male', blood: 'A+' },
-    { first: 'Divya', last: 'Pillai', gender: 'Female', blood: 'O+' },
-    { first: 'Karthik', last: 'Sundaram', gender: 'Male', blood: 'B+' },
-    { first: 'Anjali', last: 'Tripathi', gender: 'Female', blood: 'A+' },
-    { first: 'Manish', last: 'Rao', gender: 'Male', blood: 'O+' },
-    { first: 'Riya', last: 'Kapoor', gender: 'Female', blood: 'B+' },
-    { first: 'Arjun', last: 'Nambiar', gender: 'Male', blood: 'A-' },
-    { first: 'Shreya', last: 'Ghosh', gender: 'Female', blood: 'O+' },
-    { first: 'Nikhil', last: 'Saxena', gender: 'Male', blood: 'B+' },
-    { first: 'Megha', last: 'Bhat', gender: 'Female', blood: 'A+' },
-    { first: 'Pranav', last: 'Kulkarni', gender: 'Male', blood: 'AB+' },
-    { first: 'Tarun', last: 'Varma', gender: 'Male', blood: 'O-' },
-    { first: 'Swati', last: 'Pandey', gender: 'Female', blood: 'A+' },
-    { first: 'Harsh', last: 'Vardhan', gender: 'Male', blood: 'B+' },
-    { first: 'Kriti', last: 'Sanon', gender: 'Female', blood: 'O+' },
   ];
 
   const studentPassword = await bcrypt.hash('12345678', 10);
@@ -508,8 +483,8 @@ async function main() {
     },
   });
 
-  console.log('Enrolling all 30 students across the 8 subjects...');
-  // All IS students take core CS/IS subjects + Open Elective (IoT)
+  console.log('Enrolling all 5 students across registered subjects...');
+  // All 5 IS students take core CS/IS subjects + Open Elective (IoT)
   // Additional electives (EC401, EC402, ME401) distributed across students so every faculty has enrolled students
   for (let i = 0; i < studentRecords.length; i++) {
     const s = studentRecords[i];
@@ -532,7 +507,7 @@ async function main() {
     }
   }
 
-  console.log('Seeding attendance records for all 30 students across all registered subjects...');
+  console.log('Seeding attendance records for all 5 students across all registered subjects...');
   const sessionDates: Date[] = [];
   for (let d = 25; d >= 1; d--) {
     const dt = new Date(Date.now() - d * 24 * 60 * 60 * 1000);
@@ -549,20 +524,27 @@ async function main() {
     const course = reg.course;
     const studentIdx = studentRecords.findIndex((s) => s.id === reg.studentId);
 
-    // Target attendance ratios: Student 0 (Aarav, 1NC24IS001) has 84.0% overall (< 85%)
+    // Specific verified attendance ratios for each of the 5 students:
     let targetRatio = 0.88;
     if (studentIdx === 0) {
+      // Aarav (1NC24IS001) - overall ~83.3% (< 85% Shortage: triggers mandatory popup alert)
       if (course.code === 'CS402') targetRatio = 0.76; // 76% Shortage
       else if (course.code === 'CS403') targetRatio = 0.80; // 80% Shortage
       else if (course.code === 'ID401') targetRatio = 0.80; // 80% Shortage
-      else if (course.code === 'CS401') targetRatio = 0.92; // 92%
-      else targetRatio = 0.88;
+      else if (course.code === 'CS401') targetRatio = 0.92; // 92% Compliant
+      else targetRatio = 0.84;
+    } else if (studentIdx === 1) {
+      // Priya (1NC24IS002) - overall 92% (Compliant >= 85%)
+      targetRatio = 0.92;
     } else if (studentIdx === 2) {
-      targetRatio = 0.68;
-    } else if (studentIdx % 4 === 1) {
+      // Rohan (1NC24IS003) - overall 70% (< 85% Shortage)
+      targetRatio = 0.70;
+    } else if (studentIdx === 3) {
+      // Sneha (1NC24IS004) - overall 88% (Compliant >= 85%)
+      targetRatio = 0.88;
+    } else if (studentIdx === 4) {
+      // Kavya (1NC24IS005) - overall 80% (< 85% Shortage)
       targetRatio = 0.80;
-    } else {
-      targetRatio = 0.90;
     }
 
     const faculty = facultyRecords.find((f) => f.id === course.facultyId) || facultyRecords[0];
@@ -605,7 +587,7 @@ async function main() {
     });
   }
 
-  console.log('Seeding Semester Fees for all 30 students...');
+  console.log('Seeding Semester Fees for all 5 students...');
   for (let i = 0; i < studentRecords.length; i++) {
     const s = studentRecords[i];
     const totalFee = 58000.0;
@@ -718,7 +700,7 @@ async function main() {
 
   console.log('\n=============================================');
   console.log('✅ DATABASE RE-SEEDED WITH:');
-  console.log('  • 30 Students');
+  console.log('  • 5 Students (USN 1NC24IS001 - 1NC24IS005)');
   console.log('  • 8 Teachers');
   console.log('  • 8 Subjects');
   console.log('  • 1 Administrator, 2 Parents');
