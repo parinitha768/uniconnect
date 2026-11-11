@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "UniConnect - Intelligent University Management Portal",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
-    "build": "npm --prefix backend install && npm --prefix backend run prisma:generate && npm --prefix backend run build && npm --prefix frontend install && npm --prefix frontend run build",
+    "build": "npm --prefix backend install --include=dev && npm --prefix backend run prisma:generate && npm --prefix backend run build && npm --prefix frontend install --include=dev && npm --prefix frontend run build",
     "start": "npm --prefix backend run prisma:push && npm --prefix backend run prisma:seed && npm --prefix backend start"
   },
   "keywords": [
