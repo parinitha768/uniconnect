@@ -96,3 +96,4 @@ npm run db:seed
 npm start
 ```
 The application will be live at **`http://localhost:5000`**.
+

@@ -39,3 +39,4 @@ EXPOSE 5000
 
 # Run migrations, seed if db is empty, and start
 CMD ["sh", "-c", "npx prisma db push && (npx tsx prisma/seed.ts || true) && node dist/index.js"]
+
