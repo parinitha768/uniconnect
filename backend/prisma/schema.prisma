@@ -1,0 +1,410 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         // STUDENT, FACULTY, PARENT, ADMIN
+  phone         String?
+  avatar        String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  student       Student?
+  faculty       Faculty?
+  parent        Parent?
+  notifications Notification[]
+  announcements Announcement[]
+}
+
+model Department {
+  id                  String             @id @default(uuid())
+  code                String             @unique // CSE, ECE, MECH, etc.
+  name                String
+  description         String?
+  attendanceThreshold Float              @default(75.0) // 75% or 85% configurable per policy
+  condonationMin      Float              @default(65.0)
+  condonationFee      Float              @default(500.0)
+  createdAt           DateTime           @default(now())
+
+  students            Student[]
+  faculties           Faculty[]
+  courses             Course[]
+  feeStructures       FeeStructure[]
+  gradingPolicies     GradingPolicy[]
+  announcements       Announcement[]
+  timetables          Timetable[]
+}
+
+model AcademicSemester {
+  id                   String               @id @default(uuid())
+  code                 String               @unique // FALL-2026, SPRING-2026
+  name                 String
+  year                 Int
+  isCurrent            Boolean              @default(false)
+  registrationOpen     Boolean              @default(true)
+  registrationDeadline DateTime?
+  minCredits           Int                  @default(16)
+  maxCredits           Int                  @default(28)
+  startDate            DateTime
+  endDate              DateTime
+
+  registrations        CourseRegistration[]
+  examinations         Examination[]
+  semesterResults      SemesterResult[]
+  studentFees          StudentFee[]
+  feeStructures        FeeStructure[]
+}
+
+model Student {
+  id                     String                 @id @default(uuid())
+  userId                 String                 @unique
+  user                   User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rollNumber             String                 @unique
+  admissionYear          Int
+  departmentId           String
+  department             Department             @relation(fields: [departmentId], references: [id])
+  currentSemester        Int                    @default(1)
+  cgpa                   Float                  @default(0.0)
+  earnedCredits          Int                    @default(0)
+  dateOfBirth            String?
+  gender                 String?
+  bloodGroup             String?
+  address                String?
+  emergencyContact       String?
+
+  parentLinks            ParentStudentLink[]
+  registrations          CourseRegistration[]
+  attendanceRecords      AttendanceRecord[]
+  attendanceCondonations AttendanceCondonation[]
+  examMarks              ExaminationMark[]
+  semesterResults        SemesterResult[]
+  fees                   StudentFee[]
+  payments               Payment[]
+  grievances             Grievance[]
+  submissions            AssignmentSubmission[]
+}
+
+model Faculty {
+  id                String             @id @default(uuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId        String             @unique
+  departmentId      String
+  department        Department         @relation(fields: [departmentId], references: [id])
+  designation       String             // Professor, Associate Professor, Assistant Professor
+  qualification     String?
+  specialization    String?
+  joiningDate       DateTime?
+  officeRoom        String?
+
+  timetables        Timetable[]
+  attendanceRecords AttendanceRecord[]
+  assignments       Assignment[]
+  courses           Course[]
+}
+
+model Parent {
+  id           String              @id @default(uuid())
+  userId       String              @unique
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  occupation   String?
+  relationship String              @default("Father") // Father, Mother, Guardian
+  address      String?
+
+  studentLinks ParentStudentLink[]
+}
+
+model ParentStudentLink {
+  id           String   @id @default(uuid())
+  parentId     String
+  parent       Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  relationship String?
+  isVerified   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@unique([parentId, studentId])
+}
+
+model Course {
+  id             String                 @id @default(uuid())
+  code           String                 @unique
+  title          String
+  description    String?
+  departmentId   String
+  department     Department             @relation(fields: [departmentId], references: [id])
+  facultyId      String?
+  faculty        Faculty?               @relation(fields: [facultyId], references: [id])
+  semesterNumber Int
+  credits        Int                    @default(3)
+  type           String                 @default("CORE") // CORE, ELECTIVE, INTERDISCIPLINARY
+  capacity       Int                    @default(60)
+  syllabus       String?
+  prerequisites  String?
+
+  registrations  CourseRegistration[]
+  attendance     AttendanceRecord[]
+  examinations   Examination[]
+  timetables     Timetable[]
+  assignments    Assignment[]
+  condonations   AttendanceCondonation[]
+}
+
+model CourseRegistration {
+  id            String           @id @default(uuid())
+  studentId     String
+  student       Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId      String
+  course        Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  semesterId    String
+  semester      AcademicSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  registeredAt  DateTime         @default(now())
+  status        String           @default("REGISTERED") // REGISTERED, DROPPED, APPROVED
+  internalMarks Float?
+  grade         String?
+
+  @@unique([studentId, courseId, semesterId])
+}
+
+model AttendanceRecord {
+  id          String   @id @default(uuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  facultyId   String
+  faculty     Faculty  @relation(fields: [facultyId], references: [id])
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date        DateTime
+  status      String   @default("PRESENT") // PRESENT, ABSENT, LATE, EXCUSED
+  sessionType String   @default("LECTURE") // LECTURE, LAB, TUTORIAL
+  remarks     String?
+  createdAt   DateTime @default(now())
+
+  @@index([courseId, date])
+  @@index([studentId])
+}
+
+model AttendanceCondonation {
+  id                String   @id @default(uuid())
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId          String
+  course            Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  semesterId        String
+  currentPercentage Float
+  reason            String
+  medicalCert       String?
+  status            String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  adminRemarks      String?
+  reviewedAt        DateTime?
+  createdAt         DateTime @default(now())
+}
+
+model Examination {
+  id         String            @id @default(uuid())
+  name       String            // Mid-Semester Assessment, End-Semester Examination
+  type       String            @default("SEMESTER_END") // MID_SEM, SEMESTER_END, QUIZ
+  courseId   String
+  course     Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  semesterId String
+  semester   AcademicSemester  @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  examDate   DateTime
+  startTime  String            // e.g. "10:00 AM"
+  endTime    String            // e.g. "01:00 PM"
+  maxMarks   Float             @default(100.0)
+  weightage  Float             @default(60.0)
+  roomNumber String?
+
+  marks      ExaminationMark[]
+}
+
+model ExaminationMark {
+  id            String      @id @default(uuid())
+  examinationId String
+  examination   Examination @relation(fields: [examinationId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  marksObtained Float
+  isApproved    Boolean     @default(false)
+  remarks       String?
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([examinationId, studentId])
+}
+
+model GradingPolicy {
+  id           String     @id @default(uuid())
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  grade        String     // O, A+, A, B+, B, C, P, F
+  minScore     Float
+  maxScore     Float
+  gradePoints  Float
+  description  String?
+
+  @@unique([departmentId, grade])
+}
+
+model SemesterResult {
+  id            String           @id @default(uuid())
+  studentId     String
+  student       Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  semesterId    String
+  semester      AcademicSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  sgpa          Float
+  cgpa          Float
+  totalCredits  Int
+  earnedCredits Int
+  status        String           @default("PUBLISHED") // DRAFT, PUBLISHED
+  publishedAt   DateTime         @default(now())
+
+  @@unique([studentId, semesterId])
+}
+
+model FeeStructure {
+  id             String           @id @default(uuid())
+  departmentId   String
+  department     Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  semesterId     String
+  semester       AcademicSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  tuitionFee     Float
+  developmentFee Float            @default(0.0)
+  examinationFee Float            @default(0.0)
+  labFee         Float            @default(0.0)
+  libraryFee     Float            @default(0.0)
+  totalAmount    Float
+
+  @@unique([departmentId, semesterId])
+}
+
+model StudentFee {
+  id          String           @id @default(uuid())
+  studentId   String
+  student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  semesterId  String
+  semester    AcademicSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  totalFee    Float
+  paidFee     Float            @default(0.0)
+  pendingFee  Float
+  dueDate     DateTime
+  status      String           @default("PENDING") // PAID, PARTIAL, PENDING, OVERDUE
+
+  payments    Payment[]
+
+  @@unique([studentId, semesterId])
+}
+
+model Payment {
+  id            String     @id @default(uuid())
+  studentFeeId  String
+  studentFee    StudentFee @relation(fields: [studentFeeId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount        Float
+  transactionId String     @unique
+  paymentMethod String     @default("ONLINE_UPI") // CARD, NETBANKING, UPI
+  gateway       String     @default("SIMULATED_RAZORPAY")
+  status        String     @default("SUCCESS") // SUCCESS, FAILED, PENDING
+  receiptNumber String     @unique
+  paidAt        DateTime   @default(now())
+}
+
+model Grievance {
+  id            String    @id @default(uuid())
+  studentId     String
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  category      String    // ACADEMIC, HOSTEL, FEE, EXAMINATION, HARASSMENT, INFRASTRUCTURE, OTHER
+  subject       String
+  description   String
+  status        String    @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED, REJECTED
+  adminResponse String?
+  resolvedBy    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  category  String   @default("ANNOUNCEMENT") // ATTENDANCE, EXAM, RESULT, FEE, COURSE, ANNOUNCEMENT, GRIEVANCE
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Announcement {
+  id           String      @id @default(uuid())
+  title        String
+  content      String
+  targetRole   String      @default("ALL") // ALL, STUDENT, FACULTY, PARENT
+  authorId     String
+  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  isPinned     Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+}
+
+model Timetable {
+  id             String     @id @default(uuid())
+  departmentId   String
+  department     Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  semesterNumber Int
+  courseId       String
+  course         Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  facultyId      String
+  faculty        Faculty    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  dayOfWeek      String     // MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
+  startTime      String     // "09:00"
+  endTime        String     // "10:00"
+  roomNumber     String
+}
+
+model Assignment {
+  id          String                 @id @default(uuid())
+  courseId    String
+  course      Course                 @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  facultyId   String
+  faculty     Faculty                @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  dueDate     DateTime
+  maxMarks    Float                  @default(20.0)
+  fileUrl     String?
+  createdAt   DateTime               @default(now())
+
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id            String     @id @default(uuid())
+  assignmentId  String
+  assignment    Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  content       String?
+  fileUrl       String?
+  submittedAt   DateTime   @default(now())
+  marksObtained Float?
+  feedback      String?
+
+  @@unique([assignmentId, studentId])
+}
+

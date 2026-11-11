@@ -1,0 +1,27 @@
+{
+  "name": "uniconnect",
+  "version": "1.0.0",
+  "description": "UniConnect - Intelligent University Management Portal (Production Deployment Package)",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "db:push": "npm --prefix backend run prisma:push",
+    "db:seed": "npm --prefix backend run prisma:seed",
+    "start": "npm --prefix backend start",
+    "postinstall": "npm --prefix backend run prisma:generate"
+  },
+  "keywords": [
+    "university-portal",
+    "react",
+    "nodejs",
+    "express",
+    "prisma",
+    "mysql",
+    "typescript"
+  ],
+  "author": "Nagarjuna University",
+  "license": "ISC"
+}

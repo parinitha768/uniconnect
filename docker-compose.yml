@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uniconnect-app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - JWT_SECRET=uniconnect-production-secret-key-2026
+      - DATABASE_URL=mysql://uniconnect:UniConnectPass2026!@db:3306/uniconnect
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: uniconnect-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: RootSecurePass2026!
+      MYSQL_DATABASE: uniconnect
+      MYSQL_USER: uniconnect
+      MYSQL_PASSWORD: UniConnectPass2026!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "uniconnect", "-pUniConnectPass2026!"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

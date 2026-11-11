@@ -1,0 +1,12 @@
+// MySQL schema configuration for production / local MySQL 8.0
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Exactly identical models as schema.prisma
+
