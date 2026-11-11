@@ -133,6 +133,12 @@ export const LoginPage: React.FC = () => {
                 </>
               )}
             </button>
+
+            {/* Student Login Credentials Notice */}
+            <div className="p-2.5 rounded-xl bg-sky-50/90 border border-sky-200 text-[11px] text-sky-900 flex items-center justify-between shadow-xs">
+              <span>🎓 <strong>Student Login:</strong> USN <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">1NC24IS001</code></span>
+              <span>Password: <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-sky-200">12345678</code></span>
+            </div>
           </form>
 
           {/* Quick Demo Logins Section */}
@@ -167,13 +173,13 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => handleDemoLogin('1NC24IS001', 'Student@123')}
+                onClick={() => handleDemoLogin('1NC24IS001', '12345678')}
                 className="p-2.5 rounded-xl border border-sky-100 bg-sky-50/60 hover:bg-sky-100 text-sky-800 text-xs font-medium flex items-center gap-2 transition-colors text-left cursor-pointer"
               >
                 <GraduationCap className="w-4 h-4 text-sky-600 shrink-0" />
                 <div>
-                  <p className="font-semibold leading-tight">Student</p>
-                  <p className="text-[10px] text-sky-600/80">1NC24IS001</p>
+                  <p className="font-semibold leading-tight">Student (Aarav)</p>
+                  <p className="text-[10px] text-sky-600/80 font-mono">1NC24IS001 • 12345678</p>
                 </div>
               </button>
 

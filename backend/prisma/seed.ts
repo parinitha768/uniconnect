@@ -36,8 +36,8 @@ async function main() {
       code: 'CSE',
       name: 'Computer Science and Engineering',
       description: 'Department of Computer Science & Engineering, Nagarjuna University',
-      attendanceThreshold: 75.0,
-      condonationMin: 65.0,
+      attendanceThreshold: 85.0,
+      condonationMin: 75.0,
       condonationFee: 500.0,
     },
   });
@@ -47,8 +47,8 @@ async function main() {
       code: 'IS',
       name: 'Information Science and Engineering',
       description: 'Department of Information Science & Engineering, Nagarjuna University',
-      attendanceThreshold: 75.0,
-      condonationMin: 65.0,
+      attendanceThreshold: 85.0,
+      condonationMin: 75.0,
       condonationFee: 500.0,
     },
   });
@@ -69,8 +69,8 @@ async function main() {
       code: 'MECH',
       name: 'Mechanical Engineering',
       description: 'Department of Mechanical Engineering',
-      attendanceThreshold: 75.0,
-      condonationMin: 65.0,
+      attendanceThreshold: 85.0,
+      condonationMin: 75.0,
       condonationFee: 500.0,
     },
   });
@@ -404,7 +404,7 @@ async function main() {
     { first: 'Kriti', last: 'Sanon', gender: 'Female', blood: 'O+' },
   ];
 
-  const studentPassword = await bcrypt.hash('Student@123', 10);
+  const studentPassword = await bcrypt.hash('12345678', 10);
   const studentRecords: any[] = [];
 
   for (let i = 0; i < studentNamesList.length; i++) {
@@ -532,7 +532,7 @@ async function main() {
     }
   }
 
-  console.log('Seeding attendance records for all 30 students across the subjects...');
+  console.log('Seeding attendance records for all 30 students across all registered subjects...');
   const sessionDates: Date[] = [];
   for (let d = 25; d >= 1; d--) {
     const dt = new Date(Date.now() - d * 24 * 60 * 60 * 1000);
@@ -541,43 +541,44 @@ async function main() {
     }
   }
 
-  const dbmsCourse = courseRecords.find((c) => c.code === 'CS401')!;
-  const algoCourse = courseRecords.find((c) => c.code === 'CS402')!;
-  const cseStudents = studentRecords.filter((s) => s.dept.code === 'CSE');
+  const allRegistrations = await prisma.courseRegistration.findMany({
+    include: { course: true },
+  });
 
-  for (const date of sessionDates) {
-    for (let i = 0; i < cseStudents.length; i++) {
-      const student = cseStudents[i];
-      // Student 2 (Rohan): low attendance (<75%)
-      let statusDBMS = 'PRESENT';
-      let statusAlgo = 'PRESENT';
+  for (const reg of allRegistrations) {
+    const course = reg.course;
+    const studentIdx = studentRecords.findIndex((s) => s.id === reg.studentId);
 
-      if (i === 2) {
-        if (Math.random() > 0.62) statusDBMS = 'ABSENT';
-        if (Math.random() > 0.65) statusAlgo = 'ABSENT';
-      } else {
-        if (Math.random() > 0.90) statusDBMS = 'ABSENT';
-        if (Math.random() > 0.88) statusAlgo = 'ABSENT';
-      }
+    // Target attendance ratios: Student 0 (Aarav, 1NC24IS001) has 84.0% overall (< 85%)
+    let targetRatio = 0.88;
+    if (studentIdx === 0) {
+      if (course.code === 'CS402') targetRatio = 0.76; // 76% Shortage
+      else if (course.code === 'CS403') targetRatio = 0.80; // 80% Shortage
+      else if (course.code === 'ID401') targetRatio = 0.80; // 80% Shortage
+      else if (course.code === 'CS401') targetRatio = 0.92; // 92%
+      else targetRatio = 0.88;
+    } else if (studentIdx === 2) {
+      targetRatio = 0.68;
+    } else if (studentIdx % 4 === 1) {
+      targetRatio = 0.80;
+    } else {
+      targetRatio = 0.90;
+    }
+
+    const faculty = facultyRecords.find((f) => f.id === course.facultyId) || facultyRecords[0];
+
+    for (let d = 0; d < sessionDates.length; d++) {
+      // Deterministic attendance for accuracy
+      const thresholdIdx = Math.round(sessionDates.length * targetRatio);
+      const isPresent = d < thresholdIdx;
 
       await prisma.attendanceRecord.create({
         data: {
-          courseId: dbmsCourse.id,
-          facultyId: facultyRecords[0].id,
-          studentId: student.id,
-          date,
-          status: statusDBMS,
-          sessionType: 'LECTURE',
-        },
-      });
-
-      await prisma.attendanceRecord.create({
-        data: {
-          courseId: algoCourse.id,
-          facultyId: facultyRecords[1].id,
-          studentId: student.id,
-          date,
-          status: statusAlgo,
+          courseId: course.id,
+          facultyId: faculty.id,
+          studentId: reg.studentId,
+          date: sessionDates[d],
+          status: isPresent ? 'PRESENT' : 'ABSENT',
           sessionType: 'LECTURE',
         },
       });

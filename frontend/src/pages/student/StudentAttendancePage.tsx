@@ -10,6 +10,17 @@ import {
   X,
   ShieldAlert,
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  ReferenceLine,
+  Cell,
+} from 'recharts';
 
 export const StudentAttendancePage: React.FC = () => {
   const [attendanceData, setAttendanceData] = useState<any>(null);
@@ -126,6 +137,93 @@ export const StudentAttendancePage: React.FC = () => {
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Absences</p>
           <p className="text-3xl font-extrabold text-rose-600 mt-1">{totalAbsent}</p>
           <span className="text-[11px] text-slate-400 mt-1 inline-block">Sessions missed</span>
+        </div>
+      </div>
+
+      {/* Subject-wise Attendance Analysis Graph */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Subject-wise Attendance Analysis</h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Red dashed line indicates the mandatory <strong className="text-rose-600">85% Minimum Required Threshold</strong>.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="flex items-center gap-1.5 text-slate-600 font-medium">
+              <span className="w-3 h-3 rounded bg-emerald-500 inline-block"></span>
+              &ge; 85% (Eligible)
+            </span>
+            <span className="flex items-center gap-1.5 text-slate-600 font-medium">
+              <span className="w-3 h-3 rounded bg-rose-500 inline-block"></span>
+              &lt; 85% (Shortage)
+            </span>
+          </div>
+        </div>
+
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={courses.map((c: any) => ({
+                code: c.courseCode,
+                title: c.courseTitle,
+                percentage: c.percentage,
+                present: c.present,
+                total: c.total,
+              }))}
+              margin={{ top: 25, right: 20, left: -15, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="code" stroke="#64748b" fontSize={12} interval={0} tick={{ dy: 5 }} />
+              <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} unit="%" />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const d = payload[0].payload;
+                    const isOk = d.percentage >= 85;
+                    return (
+                      <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl border border-slate-800 text-xs space-y-1">
+                        <p className="font-bold text-sky-400 font-mono">{d.code}: {d.title}</p>
+                        <p className="flex justify-between gap-4">
+                          <span>Attendance:</span>
+                          <span className={`font-bold font-mono ${isOk ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {d.percentage}%
+                          </span>
+                        </p>
+                        <p className="text-[11px] text-slate-300">
+                          Sessions: {d.present} of {d.total} attended
+                        </p>
+                        <p className={`text-[10px] font-bold uppercase tracking-wider pt-1 ${isOk ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {isOk ? '✓ Exam Eligible (>= 85%)' : '⚠️ Attendance Shortage (< 85%)'}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <ReferenceLine
+                y={85}
+                stroke="#ef4444"
+                strokeDasharray="4 4"
+                strokeWidth={2}
+                label={{
+                  value: '85% Minimum Required Threshold',
+                  fill: '#dc2626',
+                  fontSize: 11,
+                  position: 'top',
+                }}
+              />
+              <Bar dataKey="percentage" radius={[8, 8, 0, 0]}>
+                {courses.map((entry: any, index: number) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.percentage >= 85 ? '#10b981' : '#f43f5e'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

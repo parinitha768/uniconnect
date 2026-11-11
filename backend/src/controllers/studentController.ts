@@ -62,7 +62,7 @@ export const getStudentDashboard = async (req: AuthRequest, res: Response): Prom
     const courseAttendance = Object.keys(courseAttendanceMap).map((cId) => {
       const item = courseAttendanceMap[cId];
       const percentage = item.total > 0 ? Number(((item.present / item.total) * 100).toFixed(1)) : 100;
-      const isShortage = percentage < (student.department.attendanceThreshold || 75.0);
+      const isShortage = percentage < (student.department.attendanceThreshold || 85.0);
       return {
         courseId: cId,
         courseCode: item.course.code,
@@ -157,16 +157,33 @@ export const getStudentDashboard = async (req: AuthRequest, res: Response): Prom
           totalFee: feeRecord?.totalFee || 0,
           activeGrievances: grievanceCount,
         },
-        registeredCourses: registrations.map((r) => ({
-          registrationId: r.id,
-          courseId: r.course.id,
-          code: r.course.code,
-          title: r.course.title,
-          credits: r.course.credits,
-          type: r.course.type,
-          facultyName: r.course.faculty?.user.name || 'TBA',
-          internalMarks: r.internalMarks,
-        })),
+        registeredCourses: registrations.map((r) => {
+          const att = courseAttendanceMap[r.course.id];
+          const attPercentage =
+            att && att.total > 0 ? Number(((att.present / att.total) * 100).toFixed(1)) : 100;
+          return {
+            registrationId: r.id,
+            courseId: r.course.id,
+            code: r.course.code,
+            title: r.course.title,
+            description: r.course.description,
+            credits: r.course.credits,
+            type: r.course.type,
+            semesterNumber: r.course.semesterNumber,
+            facultyName: r.course.faculty?.user.name || 'Assigned Faculty',
+            facultyDesignation: r.course.faculty?.designation || 'Faculty Instructor',
+            facultyEmail: r.course.faculty?.user.email || '',
+            officeRoom: r.course.faculty?.officeRoom || 'Room 302',
+            internalMarks: r.internalMarks,
+            attendance: {
+              total: att?.total || 0,
+              present: att?.present || 0,
+              absent: (att?.total || 0) - (att?.present || 0),
+              percentage: attPercentage,
+              isShortage: attPercentage < (student.department.attendanceThreshold || 85.0),
+            },
+          };
+        }),
         attendanceOverview: {
           overallPercentage: overallAttendance,
           totalClasses,
